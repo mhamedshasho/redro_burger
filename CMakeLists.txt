@@ -1,9 +1,18 @@
 cmake_minimum_required(VERSION 3.24)
-project(RedroBurgerEngine VERSION 0.2.0 LANGUAGES C CXX)
+project(RedroBurgerEngine VERSION 0.3.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+include(CTest)
+
+add_library(redro_core INTERFACE)
+target_include_directories(redro_core INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/engine)
+
+add_executable(redro_core_tests tests/core_tests.cpp)
+target_link_libraries(redro_core_tests PRIVATE redro_core)
+add_test(NAME redro_core_tests COMMAND redro_core_tests)
 
 include(FetchContent)
 set(SDL_SHARED OFF CACHE BOOL "" FORCE)
