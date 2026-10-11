@@ -13,15 +13,12 @@ permissions:
 jobs:
   android-apk:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
-    env:
-      ANDROID_HOME: /usr/local/lib/android/sdk
-      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Android build tools
+      - name: Install build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build build-essential git unzip
@@ -32,25 +29,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Verify Android SDK tools
-        run: |
-          test -d "$ANDROID_HOME"
-          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager 2>/dev/null | head -n 1)"
-          test -n "$SDKMANAGER"
-          echo "$(dirname "$SDKMANAGER")" >> "$GITHUB_PATH"
-          "$SDKMANAGER" --version
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Install Android SDK components
         run: |
+          sdkmanager --version
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018"
 
-      - name: Check project Android entry point
+      - name: Check Android project files
         run: |
           test -f android/AndroidManifest.xml
-          test -f android/build.gradle
           test -f android/settings.gradle
+          test -f android/build.gradle
           test -f android/gradlew
+          test -f android/app/build.gradle
 
       - name: Build APK
         working-directory: android
