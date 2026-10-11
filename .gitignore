@@ -1,0 +1,12 @@
+build/
+cmake-build-*/
+out/
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.exe
+*.apk
+*.aab
+.DS_Store
